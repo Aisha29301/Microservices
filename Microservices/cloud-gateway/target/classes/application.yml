@@ -1,0 +1,65 @@
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    hostname: localhost
+server:
+  port: 8989
+
+spring:
+  application:
+    name: GATEWAY-SERVICE
+  cloud:
+    gateway:
+      mvc:
+        routes:
+          - id: order-service
+            uri: lb://ORDER-SERVICE
+            predicates:
+              - Path=/order/**
+#            filters:
+#              - args:
+#                  name: order-service
+#                  fallbackUri: forward:/orderServiceFallback
+
+          - id: payment-service
+            uri: lb://PAYMENT-SERVICE
+            predicates:
+              - Path=/payment/**
+#            filters:
+#                - args:
+#                    name: payment-service
+#                    fallbackUri: forward:/paymentServiceFallback
+
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: resilience4j.circuitbreakers, resilience4j.retries, resilience4j.ratelimiters, resilience4j.timelimiters, resilience4j.bulkheads
+
+#resilience4j:
+#  circuitbreaker:
+#    instances:
+#      orderServiceCircuitBreaker:
+#        registerHealthIndicator: true
+#        slidingWindowSize: 10
+#        permittedNumberOfCallsInHalfOpenState: 5
+#        failureRateThreshold: 50
+#        waitDurationInOpenState: 10s
+#      paymentServiceCircuitBreaker:
+#        registerHealthIndicator: true
+#        slidingWindowSize: 10
+#        permittedNumberOfCallsInHalfOpenState: 5
+#        failureRateThreshold: 50
+#        waitDurationInOpenState: 10s
+#  timelimiter:
+#    instances:
+#      orderServiceCircuitBreaker:
+#        timeoutDuration: 5s
+#      paymentServiceCircuitBreaker:
+#        timeoutDuration: 5s
+
+
